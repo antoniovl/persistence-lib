@@ -1,0 +1,4 @@
+rootProject.name = 'persistence'
+include 'persistence-lib'
+include 'persistence-jpa-impl'
+
