@@ -17,7 +17,7 @@ public class SQLExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(SQLExecutor.class);
     private final static String sqlComment = "--";
-    private final static String sqlTermination = ";";
+    private final static String endOfStatement = ";";
 
     private Connection conn;
     private final String sql;
@@ -38,18 +38,16 @@ public class SQLExecutor {
             while ((line = reader.readLine()) != null) {
                 if (isSQL(line)) {
                     sb.append(line);
-                    if (line.endsWith(sqlTermination)) {
+                    if (line.endsWith(endOfStatement)) {
                         sb.deleteCharAt(sb.length() - 1);
                         stmt.execute(sb.toString());
                         sb.setLength(0);
                     }
                 }
             }
-        } catch (SQLException exc) {
+        } catch (SQLException | IOException ex) {
             logger.debug("SQL = {}", sb.toString());
-            throw exc;
-        } catch (IOException exc) {
-            throw exc;
+            throw ex;
         } finally {
             if (stmt != null) {
                 try {
