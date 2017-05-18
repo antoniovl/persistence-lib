@@ -28,18 +28,21 @@ public class BaseTest {
 
     public static final String PU_NAME = "persistence-test-PU";
     public static final String JDBC_URL = "jdbc:derby:memory:persistenceTest;create=true";
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final String SQL_INIT_FILE = "org/unixlibre/persistence/impl/jpa/tests/derby/db-schema-derby.sql";
 
-    private CommandExecutor executor;
     private EmbeddedDriver embeddedDriver;
 
     public void setupDatabase() {
-        String sql = loadDatabaseSchema("db-schema-derby.sql");
         embeddedDriver = new EmbeddedDriver();
-        ;
-        try (Connection conn = embeddedDriver.connect(JDBC_URL, new Properties())) {
-            SQLExecutor sqlExecutor = new SQLExecutor(conn, sql);
-            sqlExecutor.execute();
+
+        try (Connection conn = embeddedDriver.connect(JDBC_URL, new Properties());
+             InputStream inputStream =
+                     BaseTest.class.getClassLoader().getResourceAsStream(SQL_INIT_FILE)) {
+            if (inputStream == null) {
+                throw new IllegalStateException("Can not open the SQL init file");
+            }
+            SQLExecutor sqlExecutor = new SQLExecutor(conn);
+            sqlExecutor.execute(inputStream);
         } catch (SQLException | IOException ex) {
             throw new RuntimeException(ex);
         }

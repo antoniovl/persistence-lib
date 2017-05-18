@@ -3,9 +3,7 @@ package org.unixlibre.persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,40 +14,53 @@ import java.sql.Statement;
 public class SQLExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(SQLExecutor.class);
-    private final static String sqlComment = "--";
-    private final static String sqlTermination = ";";
+    private final static String SQL_COMMENT = "--";
+    private final static String END_OF_STATEMENT = ";";
 
     private Connection conn;
-    private final String sql;
 
-    public SQLExecutor(Connection conn, String sql) {
+    public SQLExecutor(Connection conn) {
         this.conn = conn;
-        this.sql = sql;
     }
 
-    public void execute() throws SQLException, IOException {
+    public void execute(String sql) throws SQLException, IOException {
+        StringReader stringReader = new StringReader(sql);
+        execute(stringReader);
+    }
+
+    public void execute(File file) throws SQLException, IOException {
+        FileReader fileReader = new FileReader(file);
+        execute(fileReader);
+    }
+
+    public void execute(InputStream inputStream) throws SQLException, IOException {
+        InputStreamReader streamReader = new InputStreamReader(inputStream);
+        execute(streamReader);
+    }
+
+    public void execute(Reader reader) throws SQLException, IOException {
         Statement stmt = null;
         StringBuilder sb = new StringBuilder(1024);
         String line;
 
-        try (BufferedReader reader = new BufferedReader(new StringReader(sql))) {
+        try (BufferedReader bufferedReader = new BufferedReader(reader)) {
             stmt = conn.createStatement();
 
-            while ((line = reader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 if (isSQL(line)) {
                     sb.append(line);
-                    if (line.endsWith(sqlTermination)) {
+                    if (line.endsWith(END_OF_STATEMENT)) {
                         sb.deleteCharAt(sb.length() - 1);
-                        stmt.execute(sb.toString());
+                        String sql = sb.toString();
+                        logger.debug("statement: {}", sql);
+                        stmt.execute(sql);
                         sb.setLength(0);
                     }
                 }
             }
-        } catch (SQLException exc) {
+        } catch (SQLException | IOException ex) {
             logger.debug("SQL = {}", sb.toString());
-            throw exc;
-        } catch (IOException exc) {
-            throw exc;
+            throw ex;
         } finally {
             if (stmt != null) {
                 try {
@@ -61,9 +72,12 @@ public class SQLExecutor {
         }
     }
 
-    boolean isSQL(String s) {
+    private boolean isSQL(String s) {
+        if (s == null) {
+            return false;
+        }
         String line = s.trim();
         return (line.length() > 0) &&
-                (!line.startsWith(sqlComment));
+                (!line.startsWith(SQL_COMMENT));
     }
 }
