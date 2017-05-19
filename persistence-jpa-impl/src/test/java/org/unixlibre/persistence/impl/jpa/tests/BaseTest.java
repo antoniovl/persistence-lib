@@ -3,6 +3,7 @@ package org.unixlibre.persistence.impl.jpa.tests;
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeSuite;
 import org.unixlibre.persistence.CommandExecutor;
 import org.unixlibre.persistence.ExecutorContext;
 import org.unixlibre.persistence.SQLExecutor;
@@ -77,5 +78,10 @@ public class BaseTest {
             return ctx.getEntityManager();
         }
         throw new IllegalStateException("JPAExecutorContext null");
+    }
+
+    @BeforeSuite
+    public void beforeSuite() throws Exception {
+        setupDatabase();
     }
 }

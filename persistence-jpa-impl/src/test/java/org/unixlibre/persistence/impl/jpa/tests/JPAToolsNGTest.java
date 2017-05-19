@@ -28,7 +28,6 @@ public class JPAToolsNGTest extends BaseTest {
 
     @BeforeClass
     public void setUp() throws Exception {
-        setupDatabase();
         commandManager = new JPACommandManager(new CommandExecutorImpl());
     }
 
