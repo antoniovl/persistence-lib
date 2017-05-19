@@ -15,9 +15,7 @@ public class QueryParams {
             return query;
         }
 
-        params.forEach((String key, Object value) -> {
-            query.setParameter(key, value);
-        });
+        params.forEach((String key, Object value) -> query.setParameter(key, value));
 
         return query;
     }
@@ -28,9 +26,7 @@ public class QueryParams {
             return query;
         }
 
-        params.forEach((String key, Object value) -> {
-            query.setParameter(key, value);
-        });
+        params.forEach((String key, Object value) -> query.setParameter(key, value));
 
         return query;
     }

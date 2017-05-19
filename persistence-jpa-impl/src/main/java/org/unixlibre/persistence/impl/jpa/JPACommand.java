@@ -44,6 +44,10 @@ public class JPACommand<T> extends Command<T> {
     @Override
     public void runWithLocalTx(ExecutorContext executorContext) {
 
+        if (executorContext == null) {
+            throw new IllegalArgumentException("Null executorContext provided");
+        }
+
         JPAExecutorContext ctx = (JPAExecutorContext)executorContext;
 
         EntityManager entityManager = ctx.getEntityManager();
@@ -79,6 +83,10 @@ public class JPACommand<T> extends Command<T> {
 
     @Override
     public void runWithUserTx(ExecutorContext executorContext) {
+        if (executorContext == null) {
+            throw new IllegalArgumentException("Null executorContext provided");
+        }
+
         JPAExecutorContext ctx = (JPAExecutorContext)executorContext;
         EntityManager entityManager = ctx.getEntityManager();
         boolean joinedTx = false;
