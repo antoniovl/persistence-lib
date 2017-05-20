@@ -4,11 +4,9 @@ import org.apache.derby.jdbc.EmbeddedDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeSuite;
-import org.unixlibre.persistence.CommandExecutor;
 import org.unixlibre.persistence.ExecutorContext;
 import org.unixlibre.persistence.SQLExecutor;
 import org.unixlibre.persistence.impl.jpa.JPAExecutorContext;
-import org.unixlibre.persistence.impl.jpa.tests.model.Author;
 
 import javax.persistence.EntityManager;
 import java.io.ByteArrayOutputStream;
@@ -16,8 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 /**
@@ -73,7 +69,7 @@ public class BaseTest {
     }
 
     public EntityManager getEntityManager(ExecutorContext executorContext) {
-        JPAExecutorContext ctx = JPAExecutorContext.fromExecutorContext(executorContext);
+        JPAExecutorContext ctx = JPAExecutorContext.instance(executorContext);
         if (ctx != null) {
             return ctx.getEntityManager();
         }

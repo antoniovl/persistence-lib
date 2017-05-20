@@ -2,6 +2,7 @@ package org.unixlibre.persistence.impl.jpa.tests;
 
 import org.unixlibre.persistence.Command;
 import org.unixlibre.persistence.CommandExecutor;
+import org.unixlibre.persistence.ExecutorContext;
 import org.unixlibre.persistence.TransactionTypesEnum;
 import org.unixlibre.persistence.impl.jpa.JPAExecutorContext;
 import org.unixlibre.persistence.impl.jpa.JPATools;
@@ -15,15 +16,13 @@ public class CommandExecutorImpl implements CommandExecutor {
 
     @Override
     public <T> void executeCommand(Command<T> cmd) {
-        JPAExecutorContext context = getContext();
+        ExecutorContext context = getContext();
         cmd.setTransactionType(TransactionTypesEnum.LOCAL);
         cmd.run(context);
     }
 
-    private JPAExecutorContext getContext() {
+    protected ExecutorContext getContext() {
         EntityManager entityManager = JPATools.getEntityManager(BaseTest.PU_NAME);
-        return JPAExecutorContext.newBuilder()
-                .setEntityManager(entityManager)
-                .build();
+        return new JPAExecutorContext(entityManager);
     }
 }

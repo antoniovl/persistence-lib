@@ -51,14 +51,14 @@ public class JPAToolsNGTest extends BaseTest {
     public void testGetCurrentEntity() throws Exception {
         Author author = new Author(1L);
         Author a2 = commandManager.execute(executorContext -> {
-            JPAExecutorContext ctx = JPAExecutorContext.fromExecutorContext(executorContext);
+            JPAExecutorContext ctx = JPAExecutorContext.instance(executorContext);
             EntityManager entityManager = ctx.getEntityManager();
             return JPATools.getCurrentEntity(author, Author.class, entityManager);
         });
         assertEquals(author.getId(), a2.getId());
 
         commandManager.execute(executorContext -> {
-            JPAExecutorContext ctx = JPAExecutorContext.fromExecutorContext(executorContext);
+            JPAExecutorContext ctx = JPAExecutorContext.instance(executorContext);
             EntityManager entityManager = ctx.getEntityManager();
             Author a3 = new Author(Long.MAX_VALUE - 100000000);
             return JPATools.getCurrentEntity(a3, Author.class, entityManager);

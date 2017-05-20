@@ -46,6 +46,8 @@ public class JPACommand<T> extends Command<T> {
 
         if (executorContext == null) {
             throw new IllegalArgumentException("Null executorContext provided");
+        } else if (!(executorContext instanceof JPAExecutorContext)) {
+            throw new IllegalArgumentException(("The ExecutorContext is not an instance of JPAExecutorContext"));
         }
 
         JPAExecutorContext ctx = (JPAExecutorContext)executorContext;
@@ -71,8 +73,9 @@ public class JPACommand<T> extends Command<T> {
                 tx.commit();
             }
 
-        } catch (RuntimeException e) {
-            if (tx.isActive()) {
+        } catch (Exception e) {
+            boolean canRollback = e instanceof RuntimeException || ctx.isRollbackOnApplicationException();
+            if (tx.isActive() && canRollback) {
                 tx.rollback();
             }
             throw e;

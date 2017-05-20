@@ -16,7 +16,6 @@ public abstract class Command<T> implements Serializable {
     
     private TransactionTypesEnum transactionType = TransactionTypesEnum.LOCAL;
     
-    //public abstract void execute();
     public abstract void runWithLocalTx(ExecutorContext ctx);
     public abstract void runWithUserTx(ExecutorContext ctx);
    
