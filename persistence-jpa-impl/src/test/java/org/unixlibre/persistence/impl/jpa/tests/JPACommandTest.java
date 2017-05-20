@@ -10,14 +10,22 @@ import org.unixlibre.persistence.CommandManager;
 import org.unixlibre.persistence.TransactionTypesEnum;
 import org.unixlibre.persistence.impl.jpa.JPACommand;
 import org.unixlibre.persistence.impl.jpa.JPACommandManager;
+import org.unixlibre.persistence.impl.jpa.JPATools;
 import org.unixlibre.persistence.impl.jpa.tests.model.Author;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 import java.util.Date;
+import java.util.Optional;
 
-import static org.testng.Assert.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Created by antoniovl on 18/05/17.
@@ -97,8 +105,29 @@ public class JPACommandTest extends BaseTest {
         assertEquals(newCount, count);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testRunWithUserTx() throws Exception {
+    }
+
+    @Test(expectedExceptions = {IllegalArgumentException.class})
+    public void testExecutionContextWithWrongType() throws Exception {
+        CommandExecutorImpl commandExecutorImpl = spy(CommandExecutorImpl.class);
+        // set wrong class type
+        when(commandExecutorImpl.getContext()).thenReturn(new OtherExecutorContext());
+        JPACommandManager manager = new JPACommandManager(commandExecutorImpl);
+        Optional<Author> authorOptional = manager.execute(executorContext -> {
+            EntityManager entityManager = getEntityManager(executorContext);
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Author> criteria = builder.createQuery(Author.class);
+            Root<Author> authorRoot = criteria.from(Author.class);
+            criteria.select(authorRoot)
+                    .where(
+                            builder.equal(authorRoot.get("id"), 1L)
+                    );
+            TypedQuery<Author> q = entityManager.createQuery(criteria);
+            return JPATools.getSingleResult(q);
+        });
+        assertTrue(authorOptional.isPresent());
     }
 
     private Long countAuthors() {
