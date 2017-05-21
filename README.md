@@ -20,7 +20,7 @@ that it´s implemented and depends on the project.
 
 Persistence-lib consists in many abstract classe besides the SQLExecutor utility class. We need to focus on the concrete implementations.
 
-## JPA
+## Using JPA
 The main components are:
 * JPACommand
 * JPACommandManager
@@ -92,3 +92,73 @@ public class UserDao extends OtherSuperClass {
 }
 ```
 If we're using CDI in our Application, then can manage to inject instances of CommandExecutor or CommandManager into our beans.
+
+JPACommand checks if a transaction it's already active and executes the unit of work under it's scope. So it's safe do to something
+like:
+```java
+public class UserDao extends OtherSuperClass {
+   private CommandManager commandManager;
+   
+   public UserDao(CommandExecutor executor) {
+    commandManager = JPACommandManager(executor);
+   }
+   
+   public void persistSomething() {
+     commandManager.execute(executorContext -> {
+       // ... persist something in the DB
+       // then call other method
+       persistOther();
+     }
+   }
+   public void persistOther() {
+     return commandManager.execute(executorContext -> {
+       // ... persist other thing in the DB
+     });
+   }
+}
+```
+### JPATools
+JPATools provides several utility methods.
+```java
+getEntityManager(String persistenceUnit, Map overwrite)
+getEntityManager(String persistenceUnit)
+```
+Arguments:
+* persistenceUnit: String with the name of the persistenceUnit declared in persistence.xml We can use multiple persistence units
+as long as we declare them in persistence.xml.
+* overwrite: Map with properties for the EntityManager. 
+The class holds internally an EntityManagerFactory for each persistence unit, and getting an EntityManager it's thread safe.
+
+---
+```java
+closeEntityManagerFactories()
+```
+Closes the EntityManagerFactories that have been created.
+
+---
+```java
+getCurrentEntity(Object entity, Class<T> klass, EntityManager entityManager)
+```
+Arguments:
+* entity : Entity to be loaded from the database.
+* klass : Type of the entity.
+* entityManager : Current entityManager.
+This method will load the provided entity from the database. It will inspect the annotated properties for @Id or @EmbeddedId and will take the values to invoke entityManager.find(). Example:
+```java
+// someAuthor won't be modified
+Author author = JPATools.getCurrentEntity(someAuthor, Author.class, entityManager);
+```
+
+---
+```java
+Optional<T> getSingleResult(Query q)
+Optional<T> getSingleResult(TypedQuery<T> q)
+```
+Arguments:
+* Query : JPA Query
+* TypedQuery : JPA TypedQuery
+The default behavior for query.getSingleResult() is to throw an exception if no results are found. In this case we return an
+Optional with either the result or empty.
+
+(c) CopyRight - Antonio Varela
+Released under the MIT Licence
