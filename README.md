@@ -129,7 +129,8 @@ Arguments:
 * persistenceUnit: String with the name of the persistenceUnit declared in persistence.xml We can use multiple persistence units
 as long as we declare them in persistence.xml.
 * overwrite: Map with properties for the EntityManager. 
-The class holds internally an EntityManagerFactory for each persistence unit, and getting an EntityManager it's thread safe.
+
+The method will return an instance of EntityManager. The class holds internally an EntityManagerFactory for each persistence unit, and getting an EntityManager it's thread safe.
 
 ---
 ```java
@@ -145,7 +146,9 @@ Arguments:
 * entity : Entity to be loaded from the database.
 * klass : Type of the entity.
 * entityManager : Current entityManager.
+
 This method will load the provided entity from the database. It will inspect the annotated properties for @Id or @EmbeddedId and will take the values to invoke entityManager.find(). Example:
+
 ```java
 // someAuthor won't be modified
 Author author = JPATools.getCurrentEntity(someAuthor, Author.class, entityManager);
