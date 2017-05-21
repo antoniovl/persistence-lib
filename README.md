@@ -11,7 +11,10 @@ The project uses Gradle, and consists in 2 modules:
 
 Modules for Pure Hibernate and plain JDBC are planned to be implemented.
 
-# Usage
+## Requirements
+[!["JDK"](https://img.shields.io/badge/JDK-8.0+-F30000.svg?style=flat)](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+
+## Usage
 The main components are:
 * Command: Contains a unit of work to be run within a transaction.
 * CommandManager: Executes a Command, and requires a CommandExecutor to do so.
