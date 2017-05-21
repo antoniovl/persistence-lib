@@ -117,6 +117,8 @@ public class UserDao extends OtherSuperClass {
    }
 }
 ```
+Also, having support for Container Managed Transactions will allow to use our code in Java EE environment just changing the transaction type to CONTAINER by the CommandExecutor.
+
 ### JPATools
 JPATools provides several utility methods.
 ```java
