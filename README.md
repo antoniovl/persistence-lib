@@ -147,7 +147,7 @@ Arguments:
 * klass : Type of the entity.
 * entityManager : Current entityManager.
 
-This method will load the provided entity from the database. It will inspect the annotated properties for @Id or @EmbeddedId and will take the values to invoke entityManager.find(). Example:
+This method will load the provided entity from the database. It will inspect the annotated properties for `@Id` or `@EmbeddedId` and will take the values to invoke entityManager.find(). Example:
 
 ```java
 // someAuthor won't be modified
