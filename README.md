@@ -166,5 +166,5 @@ Arguments:
 The default behavior for query.getSingleResult() is to throw an exception if no results are found. In this case we return an
 Optional with either the result or empty.
 
-(c) CopyRight - Antonio Varela
+&copy; CopyRight - Antonio Varela<br/>
 Released under the MIT Licence
