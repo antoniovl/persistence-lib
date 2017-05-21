@@ -91,7 +91,7 @@ public class UserDao extends OtherSuperClass {
    }
 }
 ```
-If we're using CDI in our Application, then can manage to inject instances of CommandExecutor or CommandManager into our beans.
+If we're using CDI/Autowire in our Application, then we can manage to inject instances of CommandExecutor or CommandManager into our beans.
 
 JPACommand checks if a transaction it's already active and executes the unit of work under it's scope. So it's safe do to something
 like:
