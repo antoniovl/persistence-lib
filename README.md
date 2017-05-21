@@ -158,7 +158,8 @@ Optional<T> getSingleResult(TypedQuery<T> q)
 ```
 Arguments:
 * Query : JPA Query
-* TypedQuery : JPA TypedQuery
+* TypedQuery : JPA TypedQuery.
+
 The default behavior for query.getSingleResult() is to throw an exception if no results are found. In this case we return an
 Optional with either the result or empty.
 
