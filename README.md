@@ -1,4 +1,5 @@
 # persistence-tools
+[![Build Status](https://travis-ci.org/antoniovl/persistence-tools.svg?branch=master)](https://travis-ci.org/antoniovl/persistence-tools)
 
 Persistence-tools is a utility that allows the separation of the transaction demarcation from the business logic. 
 This is a simplified version from the original library I wrote for my own projects (which has been use for quite some time in production). 
