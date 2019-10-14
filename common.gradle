@@ -5,8 +5,47 @@ apply plugin: 'maven'
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+def getPublishProperties() {
+    String home = System.getProperty("user.home")
+    File publishFile = new File(home, ".m2/publish.properties")
+    InputStream is = new FileInputStream(publishFile)
+    Properties p = new Properties()
+    p.load(is)
+    return p
+}
+
 repositories {
     mavenCentral()
+    def publish = getPublishProperties()
+    maven {
+        url publish["release.url"]
+    }
+}
+
+def getCredentials() {
+    String home = System.getProperty("user.home")
+    File settingsFile = new File(home, ".m2/settings.xml")
+    def xmlSlurper = new XmlSlurper()
+    def output = xmlSlurper.parse(settingsFile)
+    def entries = output."servers"."server"
+    for (entry in entries) {
+        if (entry."id".text() == "releases") {
+            return [username: entry.username.text(), password: entry.password.text()]
+        }
+    }
+    return [:]
+}
+
+uploadArchives {
+    def credentials = getCredentials()
+    def publish = getPublishProperties()
+    repositories {
+        mavenDeployer {
+            repository(url: publish["release.url"]) {
+                authentication(userName: credentials["username"], password: credentials["password"])
+            }
+        }
+    }
 }
 
 dependencies {
