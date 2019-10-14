@@ -8,10 +8,14 @@ sourceCompatibility = '1.8'
 def getPublishProperties() {
     String home = System.getProperty("user.home")
     File publishFile = new File(home, ".m2/publish.properties")
-    InputStream is = new FileInputStream(publishFile)
-    Properties p = new Properties()
-    p.load(is)
-    return p
+    try {
+        InputStream is = new FileInputStream(publishFile)
+        Properties p = new Properties()
+        p.load(is)
+        return p
+    } catch (IOException ioe) {
+        return new Properties()
+    }
 }
 
 repositories {
