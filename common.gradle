@@ -8,6 +8,9 @@ sourceCompatibility = '1.8'
 def getPublishProperties() {
     String home = System.getProperty("user.home")
     File publishFile = new File(home, ".m2/publish.properties")
+    if (!publishFile.exists()) {
+        return new Properties()
+    }
     try {
         InputStream is = new FileInputStream(publishFile)
         Properties p = new Properties()
@@ -21,8 +24,10 @@ def getPublishProperties() {
 repositories {
     mavenCentral()
     def publish = getPublishProperties()
-    maven {
-        url publish["release.url"]
+    if (publish.size() != 0) {
+        maven {
+            url publish["release.url"]
+        }
     }
 }
 
@@ -43,6 +48,7 @@ def getCredentials() {
 uploadArchives {
     def credentials = getCredentials()
     def publish = getPublishProperties()
+    disabled = (credentials.size() == 0 || publish.size() == 0)
     repositories {
         mavenDeployer {
             repository(url: publish["release.url"]) {
