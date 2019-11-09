@@ -46,9 +46,10 @@ def getCredentials() {
 }
 
 uploadArchives {
+    // Change this for deploying to Maven Repo
+    enabled = false
     def credentials = getCredentials()
     def publish = getPublishProperties()
-    disabled = (credentials.size() == 0 || publish.size() == 0)
     repositories {
         mavenDeployer {
             repository(url: publish["release.url"]) {
